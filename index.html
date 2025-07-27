@@ -6,36 +6,156 @@
   <title>SafeCode | ตรวจสอบความปลอดภัยโค้ด Python</title>
   <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #111; color: #eee; }
-    header { background-color: #1a1a1a; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
-    nav a { margin: 0 1rem; color: #ccc; text-decoration: none; }
-    nav a:hover { color: gold; }
-    .logo { font-weight: bold; font-size: 1.5rem; color: gold; }
-    .hero { padding: 4rem 2rem; text-align: center; background: linear-gradient(145deg, #1f1f1f, #2a2a2a); }
-    .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; }
-    .hero p { font-size: 1.2rem; color: #ccc; margin-bottom: 2rem; }
-    .cta-btn { background-color: gold; color: black; padding: 0.8rem 1.5rem; border: none; font-size: 1rem; cursor: pointer; border-radius: 5px; }
-    .section { padding: 3rem 2rem; max-width: 1000px; margin: auto; }
-    .section h2 { color: gold; margin-bottom: 1.5rem; }
-    .steps { display: flex; flex-direction: column; gap: 1rem; }
-    .step { background: #222; padding: 1rem; border-left: 4px solid gold; }
-    .features { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .feature { background: #1f1f1f; padding: 1rem; border-radius: 5px; }
-    textarea { width: 100%; height: 150px; margin-top: 1rem; padding: 1rem; background: #000; color: #fff; border: 1px solid #444; border-radius: 5px; font-family: monospace; }
-    footer { text-align: center; padding: 2rem; font-size: 0.9rem; color: #777; border-top: 1px solid #333; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #111;
+      color: #eee;
+    }
+
+    header {
+      background-color: #1a1a1a;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      color: #ccc;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      color: gold;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: gold;
+    }
+
+    .hero {
+      padding: 4rem 2rem;
+      text-align: center;
+      background: linear-gradient(145deg, #1f1f1f, #2a2a2a);
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin-bottom: 2rem;
+    }
+
+    .cta-btn {
+      background-color: gold;
+      color: black;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .section {
+      padding: 3rem 2rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .section h2 {
+      color: gold;
+      margin-bottom: 1.5rem;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .step {
+      background: #222;
+      padding: 1rem;
+      border-left: 4px solid gold;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .feature {
+      background: #1f1f1f;
+      padding: 1rem;
+      border-radius: 5px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #000;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 5px;
+      font-family: monospace;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.9rem;
+      color: #777;
+      border-top: 1px solid #333;
+    }
+
+    /* CENTERED CODE CHECKER SECTION */
+    .try-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #111;
+      padding: 2rem;
+    }
+
+    .try-container {
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    button {
+      margin-top: 1rem;
+      background-color: gold;
+      color: black;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
   <header>
-    <div class="logo">
-      🔐 SafeCode
-    </div>
+    <div class="logo">🔐 SafeCode</div>
     <nav>
       <a href="#">Home</a>
       <a href="#how">How it works</a>
       <a href="#features">Features</a>
       <a href="#try">Try</a>
-      <a href="https://github.com/Ekkarath-maker" target="_blank">GitHub</a>
+      <a href="https://github.com/yourproject" target="_blank">GitHub</a>
     </nav>
   </header>
 
@@ -63,16 +183,25 @@
       <div class="feature">📜 รองรับโค้ดยาวหลายบรรทัด และให้คำแนะนำแบบเข้าใจง่าย</div>
     </div>
   </section>
-<div class="container">
-    <h1>🔐 SafeCode Checker (Python in Browser)</h1>
-    <p>ตรวจสอบความปลอดภัยเบื้องต้นของโค้ด Python</p>
-    <p>Example of unsecured Python code: eval("print('Hacked!')") </p>
-    <textarea id="codeInput" placeholder="ใส่โค้ด Python ที่นี่..."></textarea>
-    <br>
-    <button onclick="checkCode()">ตรวจสอบ</button>
-    <div id="result">⏳ กำลังโหลด Pyodide...</div>
-  </div>
- <script>
+
+  <section id="try" class="try-section">
+    <div class="try-container">
+      <h1>🔐 SafeCode Checker (Python in Browser)</h1>
+      <p>ตรวจสอบความปลอดภัยเบื้องต้นของโค้ด Python</p>
+      <p>Example of unsecured Python code: eval("print('Hacked!')")</p>
+      <textarea id="codeInput" placeholder="ใส่โค้ด Python ที่นี่..."></textarea>
+      <br>
+      <button onclick="checkCode()">ตรวจสอบ</button>
+      <div id="result">⏳ กำลังโหลด Pyodide...</div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 SafeCode. All rights reserved.<br />
+    &copy; Developed by Ekkarath Rujiranon.
+  </footer>
+
+  <script>
     let pyodideReady = false;
     let pyodide;
 
@@ -143,12 +272,8 @@ issues = check_code(code) if valid else []
         resultDiv.innerText = "❌ เกิดข้อผิดพลาด: " + err;
       }
     }
- </script>
 
-
-  <footer>
-    &copy; 2025 SafeCode. All rights reserved.
-    Developed By Ekkarath Rujiranon
-  </footer>
+    loadPyodideAndPackages();
+  </script>
 </body>
 </html>
