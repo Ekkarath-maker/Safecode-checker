@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SafeCode | ตรวจสอบความปลอดภัยโค้ด Python</title>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
   <style>
     body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #111; color: #eee; }
     header { background-color: #1a1a1a; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
@@ -62,14 +63,89 @@
       <div class="feature">📜 รองรับโค้ดยาวหลายบรรทัด และให้คำแนะนำแบบเข้าใจง่าย</div>
     </div>
   </section>
+<div class="container">
+    <h1>🔐 SafeCode Checker (Python in Browser)</h1>
+    <p>ตรวจสอบความปลอดภัยเบื้องต้นของโค้ด Python</p>
+    <p>Example of unsecured Python code: eval("print('Hacked!')") </p>
+    <textarea id="codeInput" placeholder="ใส่โค้ด Python ที่นี่..."></textarea>
+    <br>
+    <button onclick="checkCode()">ตรวจสอบ</button>
+    <div id="result">⏳ กำลังโหลด Pyodide...</div>
+  </div>
+ <script>
+    let pyodideReady = false;
+    let pyodide;
 
-  <section id="try" class="section">
-    <h2>ลองเลย!</h2>
-    <p>วางโค้ด Python ด้านล่างแล้วคลิกปุ่มเพื่อเริ่มวิเคราะห์:</p>
-    <textarea placeholder="# พิมพ์หรือวางโค้ด Python ที่นี่..."></textarea>
-    <br />
-    <button class="cta-btn" style="margin-top: 1rem;">ตรวจสอบเลย</button>
-  </section>
+    async function loadPyodideAndPackages() {
+      pyodide = await loadPyodide();
+      await pyodide.loadPackage("micropip");
+      pyodideReady = true;
+      document.getElementById("result").innerText = "✅ Pyodide พร้อมใช้งานแล้ว";
+    }
+
+    async function checkCode() {
+      if (!pyodideReady) return alert("Pyodide ยังไม่พร้อม");
+
+      const code = document.getElementById("codeInput").value;
+      const resultDiv = document.getElementById("result");
+
+      try {
+        pyodide.globals.set("code", code);
+
+        const script = `
+import ast
+
+def is_valid_python(code):
+    try:
+        tree = ast.parse(code)
+        if not code.strip() or code.strip().startswith("#"):
+            return False
+        if len(tree.body) == 1:
+            node = tree.body[0]
+            if isinstance(node, ast.Expr):
+                if isinstance(node.value, (ast.Constant, ast.Name)):
+                    return False
+        return True
+    except:
+        return False
+
+def check_code(code):
+    results = []
+    if "eval(" in code:
+        results.append(("eval()", "ใช้ eval() อาจเสี่ยงให้รันโค้ดอันตราย"))
+    if "exec(" in code:
+        results.append(("exec()", "ใช้ exec() อาจเปิดช่องให้รันโค้ดที่ควบคุมไม่ได้"))
+    if "os.system(" in code:
+        results.append(("os.system()", "คำสั่งนี้อาจรันคำสั่ง shell จากภายนอก"))
+    if '"SELECT ' in code or "'SELECT " in code:
+        results.append(("SQL query string", "พบการเขียน SQL แบบต่อ string เสี่ยง SQL Injection"))
+    return results
+
+valid = is_valid_python(code)
+issues = check_code(code) if valid else []
+        `;
+
+        await pyodide.runPythonAsync(script);
+        const valid = pyodide.globals.get("valid");
+        const issues = pyodide.globals.get("issues").toJs();
+
+        if (!valid) {
+          resultDiv.innerHTML = "⚠️ โค้ดไม่ใช่ Python ที่ถูกต้อง";
+        } else if (issues.length > 0) {
+          resultDiv.innerHTML = "⚠️ พบจุดเสี่ยง:<ul>" +
+            issues.map(([i, msg]) => `<li>${i} → ${msg}</li>`).join('') +
+            "</ul>";
+        } else {
+          resultDiv.innerHTML = "✅ ไม่พบจุดเสี่ยงที่ตรวจได้ในเบื้องต้น";
+        }
+
+      } catch (err) {
+        resultDiv.innerText = "❌ เกิดข้อผิดพลาด: " + err;
+      }
+    }
+
+
+  <h3>Developed By Ekkarath Rujiranon</h3>
 
   <footer>
     &copy; 2025 SafeCode. All rights reserved.
