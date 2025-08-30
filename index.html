@@ -240,40 +240,14 @@ def is_valid_python(code):
 
 def check_code(code):
     results = []
-     # eval / exec
     if "eval(" in code:
         results.append(("eval()", "ใช้ eval() อาจเสี่ยงให้รันโค้ดอันตราย"))
     if "exec(" in code:
         results.append(("exec()", "ใช้ exec() อาจเปิดช่องให้รันโค้ดที่ควบคุมไม่ได้"))
-    
-    # OS command execution
     if "os.system(" in code:
         results.append(("os.system()", "คำสั่งนี้อาจรันคำสั่ง shell จากภายนอก"))
-    if "subprocess.Popen(" in code or "subprocess.call(" in code or "subprocess.run(" in code:
-        results.append(("subprocess.*", "คำสั่งนี้อาจรันคำสั่ง shell จากภายนอก โดยเฉพาะถ้าใช้ shell=True"))
-    
-    # Pickle / Marshal / YAML
-    if "pickle.load(" in code or "pickle.loads(" in code:
-        results.append(("pickle", "การโหลด pickle จาก untrusted data อาจทำให้รันโค้ดอันตราย"))
-    if "marshal.load(" in code or "marshal.loads(" in code:
-        results.append(("marshal", "marshal ไม่ปลอดภัยถ้าใช้กับข้อมูลภายนอก"))
-    if "yaml.load(" in code:
-        results.append(("yaml.load()", "ควรใช้ yaml.safe_load() แทนเพื่อป้องกันโค้ดอันตราย"))
-    
-    # tempfile
-    if "tempfile.mktemp(" in code:
-        results.append(("tempfile.mktemp()", "mktemp() ไม่ปลอดภัย อาจเจอ race condition"))
-    
-    # SQL injection
     if '"SELECT ' in code or "'SELECT " in code:
         results.append(("SQL query string", "พบการเขียน SQL แบบต่อ string เสี่ยง SQL Injection"))
-    
-    # Command injection
-    if '"+' in code or "'+" in code:  
-        # crude check: พบ string concatenation
-        if "os.system(" in code or "subprocess" in code:
-            results.append(("Command string concat", "การต่อ string กับคำสั่ง shell อาจเสี่ยง Command Injection"))
-    
     return results
 
 valid = is_valid_python(code)
@@ -303,5 +277,6 @@ issues = check_code(code) if valid else []
   </script>
 </body>
 </html>
+
 
 
