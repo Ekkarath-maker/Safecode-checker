@@ -178,7 +178,7 @@
     <h2>ฟีเจอร์เด่น</h2>
     <div class="features">
       <div class="feature">🔒 ตรวจจับคำสั่งอันตราย เช่น <code>eval</code>, <code>exec</code>, <code>subprocess</code></div>
-      <div class="feature">🧠 วิเคราะห์ด้วย AI ผสานกับ static analysis</div>
+      <div class="feature">🧠 วิเคราะห์ด้วย static analysis</div>
       <div class="feature">⚡ ใช้งานฟรี ไม่ต้องสมัครสมาชิก</div>
       <div class="feature">📜 รองรับโค้ดยาวหลายบรรทัด และให้คำแนะนำแบบเข้าใจง่าย</div>
     </div>
@@ -188,7 +188,7 @@
     <div class="try-container">
       <h1>🔐 SafeCode Checker (Python in Browser)</h1>
       <p>ตรวจสอบความปลอดภัยเบื้องต้นของโค้ด Python</p>
-      <p>Example of unsecured Python code: eval("print('Hacked!')")</p>
+      <p>Example of unsecured Python code: eval("print('Hacked!')") or code: os.system("ls " + user_input)</p>
       <textarea id="codeInput" placeholder="ใส่โค้ด Python ที่นี่..."></textarea>
       <br>
       <button onclick="checkCode()">ตรวจสอบ</button>
@@ -300,6 +300,7 @@ issues = check_code(code) if valid else []
   </script>
 </body>
 </html>
+
 
 
 
