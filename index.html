@@ -205,23 +205,16 @@
     let pyodideReady = false;
     let pyodide;
 
-    async function loadPyodideAndPackages() {
-      pyodide = await loadPyodide();
-      await pyodide.loadPackage("micropip");
-      pyodideReady = true;
-      document.getElementById("result").innerText = "✅ Pyodide พร้อมใช้งานแล้ว";
-    }
-
     async function checkCode() {
-      if (!pyodideReady) return alert("Pyodide ยังไม่พร้อม");
+  if (!pyodideReady) return alert("Pyodide ยังไม่พร้อม");
 
-      const code = document.getElementById("codeInput").value;
-      const resultDiv = document.getElementById("result");
+  const code = document.getElementById("codeInput").value;
+  const resultDiv = document.getElementById("result");
 
-      try {
-        pyodide.globals.set("code", code);
+  try {
+    pyodide.globals.set("code", code);
 
-        const script = `
+    const script = `
 import ast
 
 def is_valid_python(code):
@@ -252,31 +245,37 @@ def check_code(code):
 
 valid = is_valid_python(code)
 issues = check_code(code) if valid else []
-        `;
+    `;
 
-        await pyodide.runPythonAsync(script);
-        const valid = pyodide.globals.get("valid");
-        const issues = pyodide.globals.get("issues").toJs();
+    await pyodide.runPythonAsync(script);
 
-        if (!valid) {
-          resultDiv.innerHTML = "⚠️ โค้ดไม่ใช่ Python ที่ถูกต้อง";
-        } else if (issues.length > 0) {
-          resultDiv.innerHTML = "⚠️ พบจุดเสี่ยง:<ul>" +
-            issues.map(([i, msg]) => `<li>${i} → ${msg}</li>`).join('') +
-            "</ul>";
-        } else {
-          resultDiv.innerHTML = "✅ ไม่พบจุดเสี่ยงที่ตรวจได้ในเบื้องต้น";
-        }
+    const valid = pyodide.globals.get("valid");
+    const pyIssues = pyodide.globals.get("issues");
 
-      } catch (err) {
-        resultDiv.innerText = "❌ เกิดข้อผิดพลาด: " + err;
-      }
+    // Convert list of tuples -> JS array
+    const issues = Array.from(pyIssues).map(item => Array.from(item));
+
+    if (!valid) {
+      resultDiv.innerHTML = "⚠️ โค้ดไม่ใช่ Python ที่ถูกต้อง";
+    } else if (issues.length > 0) {
+      resultDiv.innerHTML = "⚠️ พบจุดเสี่ยง:<ul>" +
+        issues.map(([i, msg]) => `<li>${i} → ${msg}</li>`).join('') +
+        "</ul>";
+    } else {
+      resultDiv.innerHTML = "✅ ไม่พบจุดเสี่ยงที่ตรวจได้ในเบื้องต้น";
     }
+
+  } catch (err) {
+    resultDiv.innerText = "❌ เกิดข้อผิดพลาด: " + err;
+  }
+}
+
 
     loadPyodideAndPackages();
   </script>
 </body>
 </html>
+
 
 
 
