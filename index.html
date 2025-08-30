@@ -239,6 +239,7 @@ def is_valid_python(code):
         return False
 
 def check_code(code):
+    results = []
      # eval / exec
     if "eval(" in code:
         results.append(("eval()", "ใช้ eval() อาจเสี่ยงให้รันโค้ดอันตราย"))
@@ -302,4 +303,5 @@ issues = check_code(code) if valid else []
   </script>
 </body>
 </html>
+
 
