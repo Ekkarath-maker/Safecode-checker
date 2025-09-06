@@ -201,20 +201,27 @@
     &copy; Developed by Ekkarath Rujiranon.
   </footer>
 
-  <script>
-    let pyodideReady = false;
-    let pyodide;
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+<script>
+  let pyodideReady = false;
+  let pyodide;
 
-    async function checkCode() {
-  if (!pyodideReady) return alert("Pyodide ยังไม่พร้อม");
+  async function loadPyodideAndPackages() {
+    pyodide = await loadPyodide();
+    pyodideReady = true;
+    console.log("✅ Pyodide พร้อมใช้งาน");
+  }
 
-  const code = document.getElementById("codeInput").value;
-  const resultDiv = document.getElementById("result");
+  async function checkCode() {
+    if (!pyodideReady) return alert("Pyodide ยังไม่พร้อม");
 
-  try {
-    pyodide.globals.set("code", code);
+    const code = document.getElementById("codeInput").value;
+    const resultDiv = document.getElementById("result");
 
-    const script = `
+    try {
+      pyodide.globals.set("code", code);
+
+      const script = `
 import ast
 
 def is_valid_python(code):
@@ -228,7 +235,7 @@ def is_valid_python(code):
                 if isinstance(node.value, (ast.Constant, ast.Name)):
                     return False
         return True
-    except:
+    except SyntaxError:
         return False
 
 def check_code(code):
@@ -237,50 +244,46 @@ def check_code(code):
         results.append(("eval()", "ใช้ eval() อาจเสี่ยงให้รันโค้ดอันตราย"))
     if "exec(" in code:
         results.append(("exec()", "ใช้ exec() อาจเปิดช่องให้รันโค้ดที่ควบคุมไม่ได้"))
-    
-    # OS command execution
     if "os.system(" in code:
         results.append(("os.system()", "คำสั่งนี้อาจรันคำสั่ง shell จากภายนอก"))
-    
-    # SQL injection
     if '"SELECT ' in code or "'SELECT " in code:
         results.append(("SQL query string", "พบการเขียน SQL แบบต่อ string เสี่ยง SQL Injection"))
-    
-    
     return results
 
 valid = is_valid_python(code)
 issues = check_code(code) if valid else []
-    `;
+      `;
 
-    await pyodide.runPythonAsync(script);
+      await pyodide.runPythonAsync(script);
 
-    const valid = pyodide.globals.get("valid");
-    const pyIssues = pyodide.globals.get("issues");
+      const valid = pyodide.globals.get("valid");
+      const pyIssues = pyodide.globals.get("issues");
 
-    // Convert list of tuples -> JS array
-    const issues = Array.from(pyIssues).map(item => Array.from(item));
+      const issues = Array.from(pyIssues).map(item => Array.from(item));
 
-    if (!valid) {
-      resultDiv.innerHTML = "⚠️ โค้ดไม่ใช่ Python ที่ถูกต้อง";
-    } else if (issues.length > 0) {
-      resultDiv.innerHTML = "⚠️ พบจุดเสี่ยง:<ul>" +
-        issues.map(([i, msg]) => `<li>${i} → ${msg}</li>`).join('') +
-        "</ul>";
-    } else {
-      resultDiv.innerHTML = "✅ ไม่พบจุดเสี่ยงที่ตรวจได้ในเบื้องต้น";
+      if (!valid) {
+        resultDiv.innerHTML = "⚠️ โค้ดไม่ใช่ Python ที่ถูกต้อง";
+      } else if (issues.length > 0) {
+        resultDiv.innerHTML = "⚠️ พบจุดเสี่ยง:<ul>" +
+          issues.map(([i, msg]) => `<li>${i} → ${msg}</li>`).join('') +
+          "</ul>";
+      } else {
+        resultDiv.innerHTML = "✅ ไม่พบจุดเสี่ยงที่ตรวจได้ในเบื้องต้น";
+      }
+
+      valid.destroy();
+      pyIssues.destroy();
+    } catch (err) {
+      resultDiv.innerText = "❌ เกิดข้อผิดพลาด: " + err;
     }
-
-  } catch (err) {
-    resultDiv.innerText = "❌ เกิดข้อผิดพลาด: " + err;
   }
-}
 
+  loadPyodideAndPackages();
+</script>
 
-    loadPyodideAndPackages();
-  </script>
 </body>
 </html>
+
 
 
 
