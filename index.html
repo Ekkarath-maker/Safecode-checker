@@ -242,16 +242,6 @@ def check_code(code):
     if "os.system(" in code:
         results.append(("os.system()", "คำสั่งนี้อาจรันคำสั่ง shell จากภายนอก"))
     
-    
-    # Pickle / Marshal / YAML
-    if "pickle.load(" in code or "pickle.loads(" in code:
-        results.append(("pickle", "การโหลด pickle จาก untrusted data อาจทำให้รันโค้ดอันตราย"))
-    
-    
-    # tempfile
-    if "tempfile.mktemp(" in code:
-        results.append(("tempfile.mktemp()", "mktemp() ไม่ปลอดภัย อาจเจอ race condition"))
-    
     # SQL injection
     if '"SELECT ' in code or "'SELECT " in code:
         results.append(("SQL query string", "พบการเขียน SQL แบบต่อ string เสี่ยง SQL Injection"))
@@ -291,6 +281,7 @@ issues = check_code(code) if valid else []
   </script>
 </body>
 </html>
+
 
 
 
